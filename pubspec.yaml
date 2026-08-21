@@ -8,8 +8,8 @@ workspace:
 #  - app
 #  - admin
   - packages/core
-#  - packages/domain
-#  - packages/data
+  - packages/domain
+  - packages/data
 
 dev_dependencies:
   flutter_lints: ^6.0.0
