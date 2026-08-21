@@ -1,4 +1,4 @@
-name: data
+name: scrutiny_data
 description: Data input and output operations for Scrutiny
 version: 1.0.0
 publish_to: none

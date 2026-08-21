@@ -5,8 +5,8 @@ environment:
   sdk: ^3.13.1
 
 workspace:
-#  - app
-#  - admin
+  - app
+  #  - admin
   - packages/core
   - packages/domain
   - packages/data

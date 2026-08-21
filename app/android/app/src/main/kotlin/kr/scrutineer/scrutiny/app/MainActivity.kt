@@ -1,4 +1,4 @@
-package kr.scrutineer.scrutiny.scrutiny_app
+package kr.scrutineer.scrutiny.app
 
 import io.flutter.embedding.android.FlutterActivity
 
