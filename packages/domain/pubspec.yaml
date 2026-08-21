@@ -1,0 +1,19 @@
+name: scrutiny_domain
+description: Common data entites and business logics for Scrutiny
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1
+
+# Add regular dependencies here.
+dependencies:
+  # path: ^1.9.0
+
+scrutiny_core:
+  path: ../core
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
