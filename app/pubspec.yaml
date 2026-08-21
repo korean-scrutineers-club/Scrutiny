@@ -1,0 +1,31 @@
+name: scrutiny_app
+description: A mobile app for motorsport scrutineers
+publish_to: none
+resolution: workspace
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  scrutiny_core:
+    path: ../packages/core
+  scrutiny_domain:
+    path: ../packages/domain
+  scrutiny_data:
+    path: ../packages/data
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
