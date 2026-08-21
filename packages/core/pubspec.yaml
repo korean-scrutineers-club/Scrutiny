@@ -1,0 +1,16 @@
+name: scrutiny_core
+description: The core utilities, common constants, and base classes for Scrutiny.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1
+
+# Add regular dependencies here.
+dependencies:
+  # path: ^1.9.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
