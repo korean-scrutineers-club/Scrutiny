@@ -61,7 +61,7 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'0943102941691baa4860212e83ca1fbe08f4d672';
+String _$authRepositoryHash() => r'5c55c13092c0c0039018a3f472e5c70ead6236c4';
 
 /// Storage for user profiles.
 
@@ -114,7 +114,7 @@ final class UserProfileRepositoryProvider
 }
 
 String _$userProfileRepositoryHash() =>
-    r'de01c4b77224a4fabe53dcdf7d524b43389b2362';
+    r'c3bd092294359ee1594565bf808086f8e6fb00a2';
 
 /// The sign-in use case, constructed against the bound repository.
 

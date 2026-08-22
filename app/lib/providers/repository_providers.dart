@@ -12,6 +12,7 @@
 library;
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scrutiny_domain/scrutiny_domain.dart';
 import 'package:scrutiny_data/scrutiny_data.dart';
@@ -23,12 +24,13 @@ part 'repository_providers.g.dart';
 /// Kept alive because sign-in state outlives any single screen;
 /// disposing it would drop the session stream.
 @Riverpod(keepAlive: true)
-AuthRepository authRepository(Ref ref) => FakeAuthRepository();
+AuthRepository authRepository(Ref ref) =>
+    SupabaseAuthRepository(Supabase.instance.client);
 
 /// Storage for user profiles.
 @Riverpod(keepAlive: true)
 UserProfileRepository userProfileRepository(Ref ref) =>
-    FakeUserProfileRepository();
+    SupabaseUserProfileRepository(Supabase.instance.client);
 
 /// The sign-in use case, constructed against the bound repository.
 @riverpod
