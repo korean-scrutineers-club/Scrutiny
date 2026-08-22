@@ -23,12 +23,12 @@ part 'repository_providers.g.dart';
 /// Kept alive because sign-in state outlives any single screen;
 /// disposing it would drop the session stream.
 @Riverpod(keepAlive: true)
-AuthRepository authRepository(Ref ref) => MockAuthRepository();
+AuthRepository authRepository(Ref ref) => FakeAuthRepository();
 
 /// Storage for user profiles.
 @Riverpod(keepAlive: true)
 UserProfileRepository userProfileRepository(Ref ref) =>
-    MockUserProfileRepository();
+    FakeUserProfileRepository();
 
 /// The sign-in use case, constructed against the bound repository.
 @riverpod

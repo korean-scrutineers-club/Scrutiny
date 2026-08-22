@@ -77,7 +77,7 @@ class _SignInForm extends ConsumerStatefulWidget {
 }
 
 class _SignInFormState extends ConsumerState<_SignInForm> {
-  // Pre-filled to match what MockAuthRepository accepts, saving a good deal of
+  // Pre-filled to match what FakeAuthRepository accepts, saving a good deal of
   // typing during development. Clear these before the real backend is wired in.
   final _email = TextEditingController(text: 'test@example.com');
   final _password = TextEditingController(text: 'password');

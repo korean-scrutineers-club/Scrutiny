@@ -11,10 +11,10 @@ import 'package:scrutiny_domain/scrutiny_domain.dart';
 /// a session of debugging credentials and network configuration.
 ///
 /// Retain this after `SupabaseAuthRepository` arrives —
-/// move it under `test/mock/` and use it to drive use case tests offline.
+/// move it under `test/fake/` and use it to drive use case tests offline.
 ///
 /// Accepts any address; the password must be `password`.
-class MockAuthRepository implements AuthRepository {
+class FakeAuthRepository implements AuthRepository {
   final _controller = StreamController<Account?>.broadcast();
 
   /// The account for the active session, or `null` when signed out.

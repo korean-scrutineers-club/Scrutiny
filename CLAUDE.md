@@ -241,7 +241,7 @@ dart run build_runner build && git status --short
   `flutter test`, since `data` is now a Flutter package.
 - Write stub implementations of repository interfaces by hand. **Do not add
   `mockito` or `mocktail`** until hand-written stubs become genuinely burdensome.
-- The mocks(fakes) in `data` double as override targets for provider tests
+- The fakes in `data` double as override targets for provider tests
   (`overrideWithValue`), and are expected to survive the arrival of real
   implementations.
 - Tests worth having at this stage: that a use case rejects invalid input

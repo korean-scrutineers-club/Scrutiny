@@ -4,15 +4,15 @@ import 'package:scrutiny_domain/scrutiny_domain.dart';
 import 'dto/user_profile_dto.dart';
 
 /// An in-memory [UserProfileRepository], the counterpart to
-/// `MockAuthRepository`.
+/// `FakeAuthRepository`.
 ///
 /// Stores DTOs rather than entities so that the mapping is
 /// genuinely exercised on every read. Holding entities directly would leave
 /// `toEntity` untested and defeat much of the point of the exercise.
 ///
 /// Seeded with a profile for `user-001`, matching the account
-/// `MockAuthRepository` issues.
-class MockUserProfileRepository implements UserProfileRepository {
+/// `FakeAuthRepository` issues.
+class FakeUserProfileRepository implements UserProfileRepository {
   final _store = <String, UserProfileDto>{
     'user-001': UserProfileDto(
       id: 'user-001',
