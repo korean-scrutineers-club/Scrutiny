@@ -15,7 +15,8 @@ Scrutiny/
   packages/
     core/               # scrutiny_core   — Result, AppException, IDs
     domain/             # scrutiny_domain — entities, repository interfaces, use cases
-    data/               # scrutiny_data   — DTOs, mappers, repository implementations
+        data/           # scrutiny_data   — DTOs, mappers, repository implementations
+                        #                   (Flutter package: holds supabase_flutter)
 ```
 
 Dependency direction, never to be violated:
@@ -24,9 +25,17 @@ Dependency direction, never to be violated:
 core  <-  domain  <-  data  <-  app / admin
 ```
 
-`core`, `domain` and `data` are pure Dart packages. They must not depend on
-Flutter. If shared widgets or theming become necessary, add a separate
-`packages/ui` as a Flutter package rather than pulling Flutter into these.
+`core` and `domain` are pure Dart packages and must stay that way — they must
+not depend on Flutter, and `dart test` must run in them without a Flutter SDK.
+
+`data` is a Flutter package. It holds `supabase_flutter`, which needs Flutter
+for session persistence and deep-link handling. This is the correct place for
+that dependency: `data` is the layer that knows about infrastructure. It does
+not weaken the boundary, because the rule that matters is the one below it —
+`domain` has no SDK dependency.
+
+If shared widgets or theming become necessary, add a separate `packages/ui`
+rather than putting them in `data`.
 
 Application identifiers are `kr.scrutineer.scrutiny.app` and
 `kr.scrutineer.scrutiny.admin`. The reverse-domain prefix `kr.scrutineer`
@@ -123,6 +132,12 @@ Never add `dependency_overrides` — it breaks workspace resolution.
   first.
 - Absence is not an error. A lookup that may legitimately find nothing returns
   `Success(null)`, not `Failure(NotFoundException())`.
+- This package may depend on backend SDKs; that is its purpose. It may not
+  depend on Riverpod, and it must not import anything from `app` or `admin`.
+- SDK types (`supabase.User`, `PostgrestException`) appear only inside this
+  package. Nothing crossing into `domain` may reference them. The Supabase
+  `AuthException` collides in name with the domain's own, so import the SDK
+  with a prefix rather than renaming the domain type.
 
 ### app / admin
 
@@ -222,8 +237,8 @@ dart run build_runner build && git status --short
 
 ## Testing
 
-- Domain and data tests use `package:test` and run with `dart test`; only `app`
-  uses `flutter test`.
+- `core` and `domain` tests run with `dart test`. `data` and `app` need
+  `flutter test`, since `data` is now a Flutter package.
 - Write stub implementations of repository interfaces by hand. **Do not add
   `mockito` or `mocktail`** until hand-written stubs become genuinely burdensome.
 - The mocks(fakes) in `data` double as override targets for provider tests
@@ -232,6 +247,8 @@ dart run build_runner build && git status --short
 - Tests worth having at this stage: that a use case rejects invalid input
   *without* reaching its repository; that a DTO round-trips snake_case JSON and
   maps onto the right entity.
+
+
 
 ## Verification
 
@@ -296,9 +313,12 @@ grep -rn "throw " packages/*/lib --include="*.dart" \
 ## Current state
 
 The `User` vertical slice (sign-in → `Account` → `UserProfile` → display name) is
-the reference implementation and the pattern new features should copy. It runs
-against `MockAuthRepository` and `MockUserProfileRepository`; Supabase is not yet
-wired in.
+the reference implementation and the pattern new features should copy.
+
+Supabase is wired in via `SupabaseAuthRepository` and
+`SupabaseUserProfileRepository`. The fakes remain and are used for tests. The
+`profiles` table has RLS enabled with own-row select/insert/update policies;
+there is no delete policy, deletion happens by cascade from `auth.users`.
 
 `admin` has not been created.
 
