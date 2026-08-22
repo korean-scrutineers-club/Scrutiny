@@ -13,6 +13,9 @@ sealed class AppException implements Exception {
   ///
   /// Diagnostic detail belongs in logs, not here.
   final String message;
+
+  @override
+  String toString() => '$runtimeType: $message';
 }
 
 /// Raised when a request could not reach the server, or timed out.

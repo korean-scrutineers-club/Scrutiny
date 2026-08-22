@@ -311,6 +311,13 @@ grep -rn "throw " packages/*/lib --include="*.dart" \
   key bypasses RLS and must never appear in `app` or `admin`, including the
   admin web build.
 
+## Supabase
+- A new table created in SQL needs four things, in order: `create table`,
+  `alter table ... enable row level security`, `grant` to `authenticated`,
+  then policies. Creating a table through the dashboard adds the grant
+  automatically; creating it in SQL does not. A missing grant surfaces as
+  Postgres error 42501; a missing policy surfaces as an empty result.
+
 ## Working style
 
 - **Report before changing.** When asked to review or verify, list findings with
@@ -333,11 +340,10 @@ grep -rn "throw " packages/*/lib --include="*.dart" \
 The `User` vertical slice (sign-in → `Account` → `UserProfile` → display name) is
 the reference implementation and the pattern new features should copy.
 
-Supabase is initialised in `app/lib/main.dart` from compile-time configuration,
-but no Supabase repository exists yet — the slice still runs against
-`FakeAuthRepository` and `FakeUserProfileRepository`. The `profiles` table has
-RLS enabled with own-row select/insert/update policies; there is no delete
-policy, deletion happens by cascade from `auth.users`.
+Supabase is wired in via `SupabaseAuthRepository` and
+`SupabaseUserProfileRepository`. The fakes remain and are used for tests. The
+`profiles` table has RLS enabled with own-row select/insert/update policies;
+there is no delete policy, deletion happens by cascade from `auth.users`.
 
 `admin` has not been created.
 
