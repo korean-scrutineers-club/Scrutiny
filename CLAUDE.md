@@ -3,7 +3,7 @@
 Scrutiny is a system for managing motorsport scrutineering.
 
 It is a Flutter monorepo using pub workspaces. Two applications share three
-pure-Dart packages.
+packages.
 
 ## Layout
 
@@ -15,7 +15,7 @@ Scrutiny/
   packages/
     core/               # scrutiny_core   — Result, AppException, IDs
     domain/             # scrutiny_domain — entities, repository interfaces, use cases
-        data/           # scrutiny_data   — DTOs, mappers, repository implementations
+    data/               # scrutiny_data   — DTOs, mappers, repository implementations
                         #                   (Flutter package: holds supabase_flutter)
 ```
 
@@ -142,8 +142,9 @@ Never add `dependency_overrides` — it breaks workspace resolution.
 ### app / admin
 
 - The only packages that may use Riverpod.
-- `lib/providers/repository_providers.dart` is the single place where interfaces are
-  bound to implementations. Changing backend should mean editing that file alone.
+- `lib/providers/repository_providers.dart` is the single place where interfaces
+  are bound to implementations. Changing backend should mean editing that
+  file alone.
 - Feature code lives under `lib/features/<feature>/`, holding that feature's
   providers and screens together.
 - `Result` is converted to `AsyncValue` at the provider boundary: rethrow the
@@ -194,9 +195,11 @@ Never add `dependency_overrides` — it breaks workspace resolution.
 - All identifiers, comments, doc comments and hard-coded strings use **British
   English** spelling: `colour`, `organisation`, `initialise`, `cancelled`,
   `serialise`, `behaviour`. Commit messages too.
-- User-facing text in `app/` and `admin/` goes through l10n (`AppLocalizations`).
-  Korean and any other language lives in `.arb` files only, never inline. The
-  template ARB is British English.
+- User-facing text in `app/` and `admin/` is to be localised; Korean and any
+  other language lives in resource files, never inline. The library is not yet
+  chosen — `flutter_localizations` with ARB, or Slang. Until it is, hard-coded
+  British English in widgets is acceptable; do not introduce either library
+  speculatively.
 - `AppException.message` is the one exception: it is British English and not
   localised, being primarily diagnostic. If it must reach a user, map the
   exception type to a localised string at the widget layer — a `switch` over the
@@ -214,9 +217,9 @@ policy would give the drawbacks of both.
 After editing any entity, DTO or Riverpod provider:
 
 ```bash
-cd packages/domain && dart run build_runner build
-cd packages/data   && dart run build_runner build
-cd app             && dart run build_runner build
+(cd packages/domain && dart run build_runner build)
+(cd packages/data   && dart run build_runner build)
+(cd app             && dart run build_runner build)
 ```
 
 build_runner operates per package; running it at the root does nothing. Never
@@ -232,23 +235,23 @@ generated. Running `build_runner watch` makes this order happen naturally.
 Before committing, confirm sources and generated output agree:
 
 ```bash
+# from the package you edited
 dart run build_runner build && git status --short
 ```
 
 ## Testing
 
 - `core` and `domain` tests run with `dart test`. `data` and `app` need
-  `flutter test`, since `data` is now a Flutter package.
-- Write stub implementations of repository interfaces by hand. **Do not add
-  `mockito` or `mocktail`** until hand-written stubs become genuinely burdensome.
+  `flutter test`, since `data` is a Flutter package.
+- Write fakes and stubs by hand. **Do not add `mockito` or `mocktail`** until
+  hand-written ones become genuinely burdensome. A fake has working in-memory
+  behaviour (`FakeAuthRepository`); a stub returns a fixed value for one test.
 - The fakes in `data` double as override targets for provider tests
   (`overrideWithValue`), and are expected to survive the arrival of real
   implementations.
 - Tests worth having at this stage: that a use case rejects invalid input
   *without* reaching its repository; that a DTO round-trips snake_case JSON and
   maps onto the right entity.
-
-
 
 ## Verification
 
@@ -259,7 +262,7 @@ flutter pub get
 flutter analyze
 ```
 
-Use `flutter`, not `dart`, now that `app` is part of the workspace — `dart pub`
+Use `flutter`, not `dart`, since `app` is part of the workspace — `dart pub`
 cannot resolve Flutter SDK dependencies.
 
 **Editing `packages/core` or `packages/domain` can break `app` and `admin`
@@ -269,7 +272,14 @@ workspace, not just the package edited.
 Boundary checks, which should return nothing but comments:
 
 ```bash
-grep -rn "riverpod\|supabase\|firebase" packages/domain/lib packages/data/lib
+# domain and core must be free of SDKs, Flutter and Riverpod
+grep -rn "riverpod\|supabase\|firebase\|flutter" packages/domain/lib packages/core/lib
+grep -n "flutter\|supabase\|firebase\|riverpod" packages/core/pubspec.yaml packages/domain/pubspec.yaml
+
+# data may use SDKs but not Riverpod
+grep -rn "riverpod" packages/data/lib
+
+# no throwing across layer boundaries
 grep -rn "throw " packages/*/lib --include="*.dart" \
   --exclude="*.freezed.dart" --exclude="*.g.dart"
 ```
@@ -287,11 +297,19 @@ grep -rn "throw " packages/*/lib --include="*.dart" \
 ## Environment
 
 - Development happens on both a Mac (M4 Pro) and Windows with Git Bash. Written
-  guidance should assume neither.
+  guidance should not assume either platform.
 - iOS and macOS builds require the Mac.
 - Line endings are normalised by `.gitattributes` (`eol=lf`, except `.bat` and
   `.ps1`). Generated Dart files are marked `linguist-generated` and `-diff` there
   to keep reviews readable.
+- Configuration comes from `--dart-define-from-file=config/dev.json`, read
+  through `Environment` in `app/lib/config/`. Never add `flutter_dotenv`;
+  compile-time constants avoid an initialisation-order dependency and avoid
+  bundling a plain-text `.env` as an asset. `config/*.json` is ignored by Git;
+  `config/dev.example.json` is committed as the template.
+- Only the Supabase publishable key belongs in client configuration. The secret
+  key bypasses RLS and must never appear in `app` or `admin`, including the
+  admin web build.
 
 ## Working style
 
@@ -315,12 +333,13 @@ grep -rn "throw " packages/*/lib --include="*.dart" \
 The `User` vertical slice (sign-in → `Account` → `UserProfile` → display name) is
 the reference implementation and the pattern new features should copy.
 
-Supabase is wired in via `SupabaseAuthRepository` and
-`SupabaseUserProfileRepository`. The fakes remain and are used for tests. The
-`profiles` table has RLS enabled with own-row select/insert/update policies;
-there is no delete policy, deletion happens by cascade from `auth.users`.
+Supabase is initialised in `app/lib/main.dart` from compile-time configuration,
+but no Supabase repository exists yet — the slice still runs against
+`FakeAuthRepository` and `FakeUserProfileRepository`. The `profiles` table has
+RLS enabled with own-row select/insert/update policies; there is no delete
+policy, deletion happens by cascade from `auth.users`.
 
 `admin` has not been created.
 
 Not yet set up, and to be introduced only when the work calls for it: l10n and
-`.arb` files, routing, Melos, CI.
+routing, Melos, CI.
