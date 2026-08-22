@@ -8,17 +8,6 @@ part of 'repository_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The single place where interfaces are bound to implementations.
-///
-/// Riverpod appears here and nowhere below:
-/// `packages/data` uses constructor injection only.
-/// That keeps repositories constructible in a test with one line,
-/// leaves `admin` free to wire things its own way,
-/// and allows the data layer to be reused outside Flutter altogether.
-///
-/// Moving to Supabase means editing the two bindings below.
-/// Nothing in the domain or the interface changes — which is the property
-/// the slice is intended to demonstrate.
 /// The authentication backend.
 ///
 /// Kept alive because sign-in state outlives any single screen;
@@ -27,17 +16,6 @@ part of 'repository_providers.dart';
 @ProviderFor(authRepository)
 final authRepositoryProvider = AuthRepositoryProvider._();
 
-/// The single place where interfaces are bound to implementations.
-///
-/// Riverpod appears here and nowhere below:
-/// `packages/data` uses constructor injection only.
-/// That keeps repositories constructible in a test with one line,
-/// leaves `admin` free to wire things its own way,
-/// and allows the data layer to be reused outside Flutter altogether.
-///
-/// Moving to Supabase means editing the two bindings below.
-/// Nothing in the domain or the interface changes — which is the property
-/// the slice is intended to demonstrate.
 /// The authentication backend.
 ///
 /// Kept alive because sign-in state outlives any single screen;
@@ -46,17 +24,6 @@ final authRepositoryProvider = AuthRepositoryProvider._();
 final class AuthRepositoryProvider
     extends $FunctionalProvider<AuthRepository, AuthRepository, AuthRepository>
     with $Provider<AuthRepository> {
-  /// The single place where interfaces are bound to implementations.
-  ///
-  /// Riverpod appears here and nowhere below:
-  /// `packages/data` uses constructor injection only.
-  /// That keeps repositories constructible in a test with one line,
-  /// leaves `admin` free to wire things its own way,
-  /// and allows the data layer to be reused outside Flutter altogether.
-  ///
-  /// Moving to Supabase means editing the two bindings below.
-  /// Nothing in the domain or the interface changes — which is the property
-  /// the slice is intended to demonstrate.
   /// The authentication backend.
   ///
   /// Kept alive because sign-in state outlives any single screen;

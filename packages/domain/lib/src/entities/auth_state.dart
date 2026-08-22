@@ -18,7 +18,7 @@ final class Unauthenticated extends AuthState {
 /// A session is active.
 final class Authenticated extends AuthState {
   /// Creates the signed-in state for [account], with [profile] if one exists.
-  const Authenticated({required this.account, this.profile});
+  const Authenticated({required this.account, required this.profile});
 
   /// The authenticated identity.
   final Account account;

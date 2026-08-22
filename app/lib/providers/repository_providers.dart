@@ -1,12 +1,3 @@
-// lib/di/repository_providers.dart
-
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'package:scrutiny_domain/scrutiny_domain.dart';
-import 'package:scrutiny_data/scrutiny_data.dart';
-
-part 'repository_providers.g.dart';
-
 /// The single place where interfaces are bound to implementations.
 ///
 /// Riverpod appears here and nowhere below:
@@ -18,6 +9,14 @@ part 'repository_providers.g.dart';
 /// Moving to Supabase means editing the two bindings below.
 /// Nothing in the domain or the interface changes — which is the property
 /// the slice is intended to demonstrate.
+library;
+
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import 'package:scrutiny_domain/scrutiny_domain.dart';
+import 'package:scrutiny_data/scrutiny_data.dart';
+
+part 'repository_providers.g.dart';
 
 /// The authentication backend.
 ///

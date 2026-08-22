@@ -92,6 +92,8 @@ Never add `dependency_overrides` — it breaks workspace resolution.
 - Entities are Freezed. **Every field is `required`, including nullable ones**
   (`required String? avatarUrl`). Do not use `@Default(...)` on entities — it
   lets a mapper silently omit a field instead of failing to compile.
+  Sealed unions with few fields and no need for `copyWith` (`AuthState`,
+  `Result`) are hand-written instead; the `required` rule still applies to them.
 - Identifiers are wrapped in `extension type` (`UserId`, `Email`) so a raw
   `String` cannot be passed by mistake. No runtime cost. An extension type cannot
   reject its input, so a value needing validation becomes a class with a private
@@ -125,7 +127,7 @@ Never add `dependency_overrides` — it breaks workspace resolution.
 ### app / admin
 
 - The only packages that may use Riverpod.
-- `lib/di/repository_providers.dart` is the single place where interfaces are
+- `lib/providers/repository_providers.dart` is the single place where interfaces are
   bound to implementations. Changing backend should mean editing that file alone.
 - Feature code lives under `lib/features/<feature>/`, holding that feature's
   providers and screens together.
@@ -224,7 +226,7 @@ dart run build_runner build && git status --short
   uses `flutter test`.
 - Write stub implementations of repository interfaces by hand. **Do not add
   `mockito` or `mocktail`** until hand-written stubs become genuinely burdensome.
-- The fakes in `data` double as override targets for provider tests
+- The mocks(fakes) in `data` double as override targets for provider tests
   (`overrideWithValue`), and are expected to survive the arrival of real
   implementations.
 - Tests worth having at this stage: that a use case rejects invalid input
@@ -295,7 +297,7 @@ grep -rn "throw " packages/*/lib --include="*.dart" \
 
 The `User` vertical slice (sign-in → `Account` → `UserProfile` → display name) is
 the reference implementation and the pattern new features should copy. It runs
-against `FakeAuthRepository` and `FakeUserProfileRepository`; Supabase is not yet
+against `MockAuthRepository` and `MockUserProfileRepository`; Supabase is not yet
 wired in.
 
 `admin` has not been created.
